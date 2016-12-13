@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Hello jQuery</title>
+<title>Vijay Jaiswal: Notification Example</title>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
@@ -23,6 +23,16 @@
 					});
 
 	function notifyMe() {
+
+		$('#mydivStatus').text(
+				"You current status of notification is: "
+						+ Notification.permission);
+		if (Notification.permission === "denied") {
+			$('#mydivRequestAgain')
+					.html(
+							"<a href='javascript:requestAgain()'>Click Here</a> to Grant Access");
+		}
+
 		if (Notification.permission !== "granted")
 			Notification.requestPermission();
 		else {
@@ -32,36 +42,62 @@
 		}
 
 	}
-
+	function requestAgain() {
+		if (Notification.permission === "denied")
+			alert(Notification.permission === "denied")
+		Notification.requestPermission();
+	}
 	function invokeWS() {
-		$.ajax({
-			type : 'Get',
-			url : 'http://localhost:8080/greeting',
-			success : function(data) {
-				responseText = data.id + " " + data.content;
-				//alert(responseText);
-				$('#mydiv').data('myval', responseText);
+		$
+				.ajax({
+					type : 'Get',
+					url : 'http://localhost:8080/greeting?name='
+							+ $('#userName').val(),
+					success : function(data) {
+						//responseText = data.id + " " + data.content;
+						responseText = data.content;
+						//alert(responseText);
+						$('#mydiv').data('myval', responseText);
 
-				var notification = new Notification(
-						'Vijay is notifying you...', {
+						var notification = new Notification(
+								'Vijay is notifying you...',
+								{
 
-							icon : 'http://localhost:8080/images/push.png',
-							body : $('#mydiv').data('myval'),
-						});
+									icon : 'http://localhost:8080/images/alert-yellow.png',
+									body : $('#mydiv').data('myval'),
+									dir : 'auto', // or ltr, rtl
+									lang : 'EN'
+								});
 
-				notification.onclick = function() {
-					window.open("http://localhost:8080/index.html");
-				};
+						notification.onclick = function() {
+							window.open("http://localhost:8080/index.html");
+						};
 
-			}
+						notification.onerror = function() {
+							console.log('notification.Error');
+						};
+						notification.onshow = function() {
+							console.log('notification.Show');
+						};
+						notification.onclose = function() {
+							console.log('notification.Close');
+						};
+						return true;
 
-		})
+					}
+
+				})
 	}
 </script>
 </head>
 
 <body>
+	<h3 align="center">
+		<div id="mydivStatus"></div>
+		<div id="mydivRequestAgain"></div>
+	</h3>
 	<div>
+		Enter your name: <input id="userName" type="text" value="World" />&nbsp;
 		<button onclick="notifyMe()">Notify me!</button>
 		<div id="mydiv" data-myval="default"></div>
 	</div>

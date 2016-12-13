@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GreetingController {
 
-	private static final String template = "Hello Welcome, %s! Current Time is: %s";
+	private static final String template = "Welcome, %s! \n Current Time is: %s";
 	private final AtomicLong counter = new AtomicLong();
 
 	@RequestMapping("/greeting")
@@ -19,7 +19,6 @@ public class GreetingController {
 			@RequestParam(value = "name", defaultValue = "World") String name) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss z");
 		String date = sdf.format(new Date());
-		System.out.println(date);
 		
 		return new Greeting(counter.incrementAndGet(), String.format(template,
 				name,date));

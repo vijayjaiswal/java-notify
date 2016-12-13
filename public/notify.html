@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hello jQuery</title>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script type="text/javascript">
+	var responseText = "default";
+
+	// request permission on page load
+	document
+			.addEventListener(
+					'DOMContentLoaded',
+					function() {
+						if (!Notification) {
+							alert('Desktop notifications not available in your browser. Try Chromium.');
+							return;
+						}
+
+						if (Notification.permission !== "granted")
+							Notification.requestPermission();
+					});
+
+	function notifyMe() {
+		if (Notification.permission !== "granted")
+			Notification.requestPermission();
+		else {
+
+			invokeWS();
+
+		}
+
+	}
+
+	function invokeWS() {
+		$.ajax({
+			type : 'Get',
+			url : 'http://localhost:8080/greeting',
+			success : function(data) {
+				responseText = data.id + " " + data.content;
+				//alert(responseText);
+				$('#mydiv').data('myval', responseText);
+
+				var notification = new Notification(
+						'Vijay is notifying you...', {
+
+							icon : 'http://localhost:8080/images/push.png',
+							body : $('#mydiv').data('myval'),
+						});
+
+				notification.onclick = function() {
+					window.open("http://localhost:8080/index.html");
+				};
+
+			}
+
+		})
+	}
+</script>
+</head>
+
+<body>
+	<div>
+		<button onclick="notifyMe()">Notify me!</button>
+		<div id="mydiv" data-myval="default"></div>
+	</div>
+</body>
+</html>
